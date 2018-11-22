@@ -57,7 +57,7 @@
                           <Component id="jPanel3" max="32767" attributes="0"/>
                       </Group>
                       <Component id="jPanel8" pref="552" max="32767" attributes="0"/>
-                      <Component id="jPanel9" alignment="0" pref="552" max="32767" attributes="0"/>
+                      <Component id="jPanel9" alignment="0" max="32767" attributes="0"/>
                       <Component id="jPanel10" alignment="0" pref="552" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -102,17 +102,15 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="labelTamMP" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="tamMemoriaP" max="32767" attributes="0"/>
-                                  <Component id="jLabel1" max="32767" attributes="0"/>
-                                  <Component id="tamMemoriaS" max="32767" attributes="0"/>
-                                  <Component id="labelTamPagina" max="32767" attributes="0"/>
-                                  <Component id="tamPag" max="32767" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="tamMemoriaP" max="32767" attributes="0"/>
+                              <Component id="jLabel1" max="32767" attributes="0"/>
+                              <Component id="tamMemoriaS" max="32767" attributes="0"/>
+                              <Component id="labelTamPagina" max="32767" attributes="0"/>
+                              <Component id="tamPag" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -209,6 +207,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="ESTABLECER"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="establecerActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -242,7 +243,7 @@
                                   <Component id="labelTamMemoriaS" max="32767" attributes="0"/>
                                   <Component id="labelTamPag" max="32767" attributes="0"/>
                                   <Component id="labelCantMarcosP" max="32767" attributes="0"/>
-                                  <Component id="labelCantPag" max="32767" attributes="0"/>
+                                  <Component id="labelCantProcesos" max="32767" attributes="0"/>
                                   <Component id="labelMemoriaPU" max="32767" attributes="0"/>
                                   <Component id="labelMemoriaPD" max="32767" attributes="0"/>
                                   <Component id="labelTamMemoriaP" max="32767" attributes="0"/>
@@ -280,7 +281,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelCantPag" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelCantProcesos" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -407,7 +408,7 @@
                 <Property name="text" type="java.lang.String" value="X"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="labelCantPag">
+            <Component class="javax.swing.JLabel" name="labelCantProcesos">
               <Properties>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -623,6 +624,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="CREAR"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="crearProcesoActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -715,26 +719,41 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="ELIMINAR"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="eliminarProcesoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="bloquearProceso">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="BLOQUEAR"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bloquearProcesoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="suspenderProceso">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="SUSPENDER"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="suspenderProcesoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="buscarProceso">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="BUSCAR"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buscarProcesoActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="ponerProcesoListo">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="PONER LISTO"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ponerProcesoListoActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -963,7 +982,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="MEMORIA SECUNDARIA"/>
+                <Property name="text" type="java.lang.String" value="PROCESOS"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane4">

@@ -5,6 +5,9 @@
  */
 package interfaz;
 
+import logica.MemoriaVirtual;
+import logica.Proceso;
+
 /**
  *
  * @author Aran_
@@ -14,8 +17,17 @@ public class Interfaz extends javax.swing.JFrame {
     /**
      * Creates new form Interfaz
      */
+    private MemoriaVirtual memoriaVirtual;
+    private Proceso procesos[];
+    private int contadorProceso = 0;
+
     public Interfaz() {
         initComponents();
+        this.idProceso.setEditable(false);
+        this.ponerProcesoListo.setEnabled(false);
+        this.eliminarProceso.setEnabled(false);
+        this.bloquearProceso.setEnabled(false);
+        this.suspenderProceso.setEnabled(false);
     }
 
     /**
@@ -50,7 +62,7 @@ public class Interfaz extends javax.swing.JFrame {
         labelTamMemoriaP = new javax.swing.JLabel();
         labelMemoriaPD = new javax.swing.JLabel();
         labelMemoriaPU = new javax.swing.JLabel();
-        labelCantPag = new javax.swing.JLabel();
+        labelCantProcesos = new javax.swing.JLabel();
         labelCantMarcosP = new javax.swing.JLabel();
         labelTamPag = new javax.swing.JLabel();
         labelTamMemoriaS = new javax.swing.JLabel();
@@ -115,22 +127,26 @@ public class Interfaz extends javax.swing.JFrame {
         tamPag.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         establecer.setText("ESTABLECER");
+        establecer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                establecerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(51, 51, 51)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(labelTamMP)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(51, 51, 51)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tamMemoriaP)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tamMemoriaS)
-                            .addComponent(labelTamPagina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(tamPag))))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(tamMemoriaP)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tamMemoriaS)
+                        .addComponent(labelTamPagina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tamPag)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -205,9 +221,9 @@ public class Interfaz extends javax.swing.JFrame {
         labelMemoriaPU.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         labelMemoriaPU.setText("X");
 
-        labelCantPag.setForeground(new java.awt.Color(255, 255, 255));
-        labelCantPag.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelCantPag.setText("X");
+        labelCantProcesos.setForeground(new java.awt.Color(255, 255, 255));
+        labelCantProcesos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        labelCantProcesos.setText("X");
 
         labelCantMarcosP.setForeground(new java.awt.Color(255, 255, 255));
         labelCantMarcosP.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -248,7 +264,7 @@ public class Interfaz extends javax.swing.JFrame {
                             .addComponent(labelTamMemoriaS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelTamPag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelCantMarcosP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labelCantPag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(labelCantProcesos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelMemoriaPU, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelMemoriaPD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelTamMemoriaP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -277,7 +293,7 @@ public class Interfaz extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(labelCantPag))
+                    .addComponent(labelCantProcesos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -322,6 +338,11 @@ public class Interfaz extends javax.swing.JFrame {
         tamProceso.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         crearProceso.setText("CREAR");
+        crearProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearProcesoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -378,14 +399,39 @@ public class Interfaz extends javax.swing.JFrame {
         idProceso.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         eliminarProceso.setText("ELIMINAR");
+        eliminarProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarProcesoActionPerformed(evt);
+            }
+        });
 
         bloquearProceso.setText("BLOQUEAR");
+        bloquearProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bloquearProcesoActionPerformed(evt);
+            }
+        });
 
         suspenderProceso.setText("SUSPENDER");
+        suspenderProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                suspenderProcesoActionPerformed(evt);
+            }
+        });
 
         buscarProceso.setText("BUSCAR");
+        buscarProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarProcesoActionPerformed(evt);
+            }
+        });
 
         ponerProcesoListo.setText("PONER LISTO");
+        ponerProcesoListo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ponerProcesoListoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -561,7 +607,7 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel10.setPreferredSize(new java.awt.Dimension(136, 127));
 
         labelGestionarP3.setForeground(new java.awt.Color(255, 255, 255));
-        labelGestionarP3.setText("MEMORIA SECUNDARIA");
+        labelGestionarP3.setText("PROCESOS");
 
         jScrollPane4.setPreferredSize(new java.awt.Dimension(100, 94));
 
@@ -608,7 +654,7 @@ public class Interfaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -647,6 +693,160 @@ public class Interfaz extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void establecerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_establecerActionPerformed
+        try {
+            int tamañoMemoria = Integer.parseInt(this.tamMemoriaP.getText());
+            int tamañoSecundario = Integer.parseInt(this.tamMemoriaS.getText());
+            int tamañoPagina = Integer.parseInt(this.tamPag.getText());
+            if ((tamañoMemoria % 2) == 0 && (tamañoSecundario % 2) == 0 && (tamañoPagina % 2) == 0) {
+                if (tamañoMemoria > tamañoPagina) {
+                    this.memoriaVirtual = new MemoriaVirtual(tamañoMemoria, tamañoSecundario, tamañoPagina, this.cajaMensajes);
+                } else {
+                    this.cajaMensajes.append("El tamano de las paginas no puede ser mayor que el tamano de la memoria principal\n");
+                }
+            } else {
+                this.cajaMensajes.append("Los tamanos de las paginas, de la memoria principal y de la memoria secundaria deben ser potencias de 2\n");
+            }
+            this.procesos = new Proceso[memoriaVirtual.getMaximasPaginas()];
+            this.establecer.setEnabled(false);
+            this.labelTamMemoriaP.setText(Integer.toString(tamañoMemoria));
+            this.labelMemoriaPD.setText(Integer.toString(tamañoMemoria));
+            this.labelMemoriaPU.setText("0");
+            this.labelCantProcesos.setText("0");
+            this.labelCantMarcosP.setText(Integer.toString(memoriaVirtual.getCantidadMarcos()));
+            this.labelTamPag.setText(Integer.toString(tamañoPagina));
+            this.labelMemoriaSD.setText(Integer.toString(memoriaVirtual.getMemoriaSecundaria()));
+            this.labelTamMemoriaS.setText(Integer.toString(memoriaVirtual.getMemoriaSecundariaTotal()));
+            this.crearProceso.setEnabled(true);
+            this.cajaMensajes.append("La simulacion de memoria virtual ha comenzado exitosamente\n");
+            actualizarMemoriaPrincipal();
+            actualizarMemoriaSecundaria();
+            this.idProceso.setEditable(true);
+        } catch (Exception e) {
+            this.cajaMensajes.append("El tamano de la memoria principal, secundaria y de las paginas debe ser expresado en numero enteros\n");
+        }
+
+
+    }//GEN-LAST:event_establecerActionPerformed
+
+    private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
+        String nombreProceso = this.nombreProceso.getText();
+        int tamañoProceso = Integer.parseInt(this.tamProceso.getText());
+        if (tamañoProceso <= memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria()) {
+            moverFromMemoriaToAlmacenamiento();
+            this.procesos[contadorProceso] = new Proceso(contadorProceso, nombreProceso, tamañoProceso, memoriaVirtual.getTamañoPagina());
+            this.memoriaVirtual.agregarProceso(this.procesos[contadorProceso]);
+            this.cajaMensajes.append("- Se ha creado un proceso de un tamaño " + tamañoProceso + ", su id es '" + contadorProceso + "', y el numero de paginas que posee son " + tamañoProceso / memoriaVirtual.getTamañoPagina() + "\n");
+            contadorProceso++;
+            this.labelCantProcesos.setText(Integer.toString(contadorProceso));
+            this.nombreProceso.setText("Proceso " + contadorProceso);
+            actualizar();
+        } else {
+            this.cajaMensajes.append("* ALERTA: No hay suficiente espacio en la memoria principal + la memoria secundaria para crear el proceso.\n");
+        }
+    }//GEN-LAST:event_crearProcesoActionPerformed
+
+    private void bloquearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bloquearProcesoActionPerformed
+        try {
+            int idProceso = Integer.parseInt(this.idProceso.getText());
+            if (procesos[idProceso] != null) {
+                //if (procesos[idProceso].getEstado() == "Suspendido/Bloqueado") {
+                    if (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria() != 0) {
+                        moverFromMemoriaToAlmacenamiento();
+                        memoriaVirtual.listoProceso(procesos[idProceso]);
+                        this.bloquearProceso.setEnabled(false);
+                        this.suspenderProceso.setEnabled(true);
+                        this.ponerProcesoListo.setEnabled(true);
+                        actualizar();
+                    }
+                //}
+                procesos[idProceso].setEstado("Bloqueado");
+                actualizar();
+            } else {
+                this.cajaMensajes.append("* ALERTA: No se encontró ningún proceso con dicho ID\n");
+            }
+        } catch (Exception e) {
+            this.cajaMensajes.append("* ALERTA: Datos invalidos\n");
+            this.idProceso.setText("");
+        }
+    }//GEN-LAST:event_bloquearProcesoActionPerformed
+
+    private void eliminarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarProcesoActionPerformed
+        try {
+            int idProceso = Integer.parseInt(this.idProceso.getText());
+            if (procesos[idProceso] != null) {
+                memoriaVirtual.eliminarProceso(procesos[idProceso]);
+                this.suspenderProceso.setEnabled(false);
+                this.ponerProcesoListo.setEnabled(false);
+                this.eliminarProceso.setEnabled(false);
+                this.bloquearProceso.setEnabled(false);
+                actualizar();
+            } else {
+                this.cajaMensajes.append("* ALERTA: No se encontró ningún proceso con dicho ID\n");
+            }
+        } catch (Exception e) {
+            this.cajaMensajes.append("* ALERTA: Datos invalidos\n");
+            this.idProceso.setText("");
+        }
+    }//GEN-LAST:event_eliminarProcesoActionPerformed
+
+    private void ponerProcesoListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ponerProcesoListoActionPerformed
+        int idProceso = Integer.parseInt(this.idProceso.getText());
+        if (procesos[idProceso].getEstado() != "Bloqueado") {
+            if (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria() != 0) {
+                moverFromMemoriaToAlmacenamiento();
+                memoriaVirtual.listoProceso(procesos[idProceso]);
+                ponerProcesoListo.setEnabled(false);
+                this.suspenderProceso.setEnabled(true);
+                this.bloquearProceso.setEnabled(true);
+                actualizar();
+            } else {
+                this.cajaMensajes.append("* ALERTA: No hay espacio en memoria principal ni en memoria secundaria\n");
+            }
+        } else {
+            procesos[idProceso].setEstado("Listo");
+            actualizar();
+        }
+    }//GEN-LAST:event_ponerProcesoListoActionPerformed
+
+    private void buscarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarProcesoActionPerformed
+        int idProceso = Integer.parseInt(this.idProceso.getText());
+        String estado = procesos[idProceso].getEstado();
+        eliminarProceso.setEnabled(true);
+        if (estado == "Listo" || estado == "Activo") {
+            this.ponerProcesoListo.setEnabled(false);
+            this.suspenderProceso.setEnabled(true);
+            this.bloquearProceso.setEnabled(true);
+        } else if (estado == "Suspendido") {
+            this.suspenderProceso.setEnabled(false);
+            this.ponerProcesoListo.setEnabled(true);
+            this.bloquearProceso.setEnabled(false);
+        } else if (estado == "Bloqueado") {
+            this.bloquearProceso.setEnabled(false);
+            this.suspenderProceso.setEnabled(true);
+            this.ponerProcesoListo.setEnabled(true);
+        } else if (estado == "Eliminado") {
+            this.suspenderProceso.setEnabled(false);
+            this.ponerProcesoListo.setEnabled(false);
+            this.eliminarProceso.setEnabled(false);
+            this.bloquearProceso.setEnabled(false);
+        }
+    }//GEN-LAST:event_buscarProcesoActionPerformed
+
+    private void suspenderProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suspenderProcesoActionPerformed
+        int idProceso = Integer.parseInt(this.idProceso.getText());
+        if (memoriaVirtual.getContadorDisponiblesAlmacenamiento() >= procesos[idProceso].getPaginasMemoriaPrincipal()) {
+            memoriaVirtual.suspenderProceso(procesos[idProceso]);
+            this.suspenderProceso.setEnabled(false);
+            this.ponerProcesoListo.setEnabled(true);
+            this.bloquearProceso.setEnabled(false);
+            procesos[idProceso].setEstado("Suspendido");
+            actualizar();
+        } else {
+            this.cajaMensajes.append("* ALERTA: No hay suficiente espacio en la memoria secundaria para suspender el proceso\n");
+        }
+    }//GEN-LAST:event_suspenderProcesoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -680,6 +880,69 @@ public class Interfaz extends javax.swing.JFrame {
                 new Interfaz().setVisible(true);
             }
         });
+    }
+
+    private void actualizarMemoriaPrincipal() {
+        this.cajaMemoriaPrincipal.setText("");
+        for (int i = 0; i < this.memoriaVirtual.getMemoria().length; i++) {
+            if (this.memoriaVirtual.getMemoria()[i].getIdProceso() != null && this.memoriaVirtual.getMemoria()[i].getIdPagina() != null) {
+                int direccion = (this.memoriaVirtual.getMemoria()[i].getIdMarco() * memoriaVirtual.getTamañoPagina());
+                this.cajaMemoriaPrincipal.append("0x" + Integer.toHexString(direccion) + "   #Marco: " + Integer.toString(this.memoriaVirtual.getMemoria()[i].getIdMarco() + 1) + "  ID Proceso: " + Integer.toString(this.memoriaVirtual.getMemoria()[i].getIdProceso()) + " Nombre del Proceso: " + this.memoriaVirtual.getMemoria()[i].getNombreProceso() + "   Nro. Pagina:   " + Integer.toString(this.memoriaVirtual.getMemoria()[i].getIdPagina()) + "\n");
+            } else {
+                int direccion = (this.memoriaVirtual.getMemoria()[i].getIdMarco() * memoriaVirtual.getTamañoPagina());
+                this.cajaMemoriaPrincipal.append("0x" + Integer.toHexString(direccion) + "   #Marco: " + Integer.toString(this.memoriaVirtual.getMemoria()[i].getIdMarco() + 1) + "  Disponible\n");
+            }
+        }
+    }
+
+    private void actualizarMemoriaSecundaria() {
+        this.cajaMemoriaSecundaria.setText("");
+        for (int i = 0; i < this.memoriaVirtual.getAlmacenamiento().length; i++) {
+            if (this.memoriaVirtual.getAlmacenamiento()[i].getIdProceso() != null && this.memoriaVirtual.getAlmacenamiento()[i].getIdPagina() != null) {
+                this.cajaMemoriaSecundaria.append("ID Proceso: " + Integer.toString(this.memoriaVirtual.getAlmacenamiento()[i].getIdProceso()) + " Nombre del Proceso: " + this.memoriaVirtual.getAlmacenamiento()[i].getNombreProceso() + " Nro. Pagina: " + Integer.toString(this.memoriaVirtual.getAlmacenamiento()[i].getIdPagina()) + "\n");
+            }
+        }
+        if (this.cajaMemoriaSecundaria.getText().equals("")) {
+            this.cajaMemoriaSecundaria.append("Memoria secundaria vacia");
+        }
+    }
+
+    private void moverFromMemoriaToAlmacenamiento() {
+        if (memoriaVirtual.getMemoriaPrincipal() == 0) {
+            try {
+                for (int i = 0; i < procesos.length; i++) {
+                    if (procesos[i].getPaginasMemoriaPrincipal() >= 2) {
+                        this.memoriaVirtual.quitarUnaPaginaMemoria(procesos[i]);
+                        break;
+                    }
+                }
+            } catch (NullPointerException e) {
+                for (int i = 0; i < procesos.length; i++) {
+                    if (procesos[i].getPaginasMemoriaPrincipal() == 1) {
+                        this.memoriaVirtual.quitarUnaPaginaMemoria(procesos[i]);
+                        this.cajaMensajes.append("> Se ha suspendido el proceso de id " + procesos[i].getIdProceso() + " porque la memoria esta demasiado llena de procesos.\n");
+                        procesos[i].setEstado("Suspendido");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void actualizar() {
+        this.labelMemoriaSD.setText(Integer.toString(memoriaVirtual.getMemoriaSecundaria()));
+        this.labelMemoriaPD.setText(Integer.toString(memoriaVirtual.getMemoriaPrincipal()));
+        this.labelMemoriaPU.setText(Integer.toString(memoriaVirtual.getMemoriaPrincipalTotal() - memoriaVirtual.getMemoriaPrincipal()));
+        actualizarProcesos();
+        actualizarMemoriaPrincipal();
+        actualizarMemoriaSecundaria();
+    }
+
+    private void actualizarProcesos() {
+        this.cajaProcesos.setText("");
+        for (int i = 0; i < contadorProceso; i++) {
+            this.cajaProcesos.append("ID Proceso " + Integer.toString(procesos[i].getIdProceso()) + " Nombre: " + procesos[i].getNombre() + " Tamaño: " + Integer.toString(procesos[i].getTamaño()) + " Cantidad de paginas: " + Integer.toString(procesos[i].getCantidadPaginas()) + " Estado: " + procesos[i].getEstado() + " Cantidad de paginas en memoria principal: " + Integer.toString(procesos[i].getPaginasMemoriaPrincipal()) + " Cantidad de paginas en memoria secundaria: " + Integer.toString(procesos[i].getPaginasMemoriaSecundaria()) + "\n");
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -717,7 +980,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel labelCantMarcosP;
-    private javax.swing.JLabel labelCantPag;
+    private javax.swing.JLabel labelCantProcesos;
     private javax.swing.JLabel labelCrearP;
     private javax.swing.JLabel labelEBSP;
     private javax.swing.JLabel labelGestionarP;
