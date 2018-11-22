@@ -12,5 +12,13 @@ package logica;
 public class MarcoDePagina {
     
     private int tam;
+    private Pagina pagina;
+    private int numero;
+
+    public MarcoDePagina(int tam, int numero) {
+        this.tam = tam;
+        this.numero = numero;
+    }
+    
     
 }
