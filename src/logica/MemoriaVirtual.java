@@ -33,6 +33,7 @@ public class MemoriaVirtual {
     private int marcosDisponiblesAlmacenamiento[];
     private int contadorDisponiblesAlmacenamiento;
     private JTextArea textArea;
+    private int contadorPagina = 0;
 
     public MemoriaVirtual(int memoriaPrincipalTotal, int memoriaSecundariaTotal, int tamañoPagina, JTextArea textArea) {
         this.textArea = textArea;
@@ -198,17 +199,23 @@ public class MemoriaVirtual {
         }
     }
 
-    public void quitarUnaPaginaMemoria(Proceso proceso) {
+    public void quitarPaginasMemoria(Proceso proceso, int mitad) {
         for (int i = 0; i < proceso.getCantidadPaginas(); i++) {
             if (proceso.getTablaPagina()[i].getPrincipal()) {
+                
+                this.contadorPagina++;
+                
                 eliminarProcesoMemoria(proceso.getTablaPagina()[i].getIdMarco());
                 agregarProcesoAlmacenamiento(proceso, i);
-                break;
+                
+                proceso.setPaginasMemoriaSecundaria(proceso.getPaginasMemoriaSecundaria() + 1);
+                proceso.setPaginasMemoriaPrincipal(proceso.getPaginasMemoriaPrincipal() - 1);
+                if (this.contadorPagina == mitad) {
+                    break;
+                }               
             }
         }
         textArea.append("> No hay espacio en memoria principal. Se ha movido una(s) pagina(s) del proceso de id " + proceso.getIdProceso() + " a memoria secundaria\n");
-        proceso.setPaginasMemoriaSecundaria(proceso.getPaginasMemoriaSecundaria() + 1);
-        proceso.setPaginasMemoriaPrincipal(proceso.getPaginasMemoriaPrincipal() - 1);
         procesoActivoListo(proceso);
     }
 
@@ -223,8 +230,10 @@ public class MemoriaVirtual {
     private void procesoActivoListo(Proceso proceso) {
         if ((proceso.getCantidadPaginas() / 2) <= proceso.getPaginasMemoriaPrincipal()) {
             proceso.setEstado("Activo");
-        } else {
-            proceso.setEstado("Listo");
+        } else if (proceso.getPaginasMemoriaPrincipal() == 0) {
+            proceso.setEstado("Suspendido");
+        } else if (proceso.getPaginasMemoriaPrincipal() < (proceso.getCantidadPaginas() / 2)) {
+            proceso.setEstado("Bloqueado");
         }
     }
 
@@ -295,6 +304,14 @@ public class MemoriaVirtual {
 
     public void setContadorDisponibles(int contadorDisponibles) {
         this.contadorDisponibles = contadorDisponibles;
+    }
+
+    public int getContadorPagina() {
+        return contadorPagina;
+    }
+
+    public void setContadorPagina(int contadorPagina) {
+        this.contadorPagina = contadorPagina;
     }
 
     public int getMaximasPaginas() {

@@ -7,6 +7,8 @@ package interfaz;
 
 import logica.MemoriaVirtual;
 import logica.Proceso;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  *
@@ -20,6 +22,7 @@ public class Interfaz extends javax.swing.JFrame {
     private MemoriaVirtual memoriaVirtual;
     private Proceso procesos[];
     private int contadorProceso = 0;
+    private Queue<Integer> colaProcesos;
 
     public Interfaz() {
         initComponents();
@@ -39,6 +42,7 @@ public class Interfaz extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane5 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         labelTituloInformacion = new javax.swing.JLabel();
@@ -679,15 +683,17 @@ public class Interfaz extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jScrollPane5.setViewportView(jPanel1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 847, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
         );
 
         pack();
@@ -707,6 +713,7 @@ public class Interfaz extends javax.swing.JFrame {
             } else {
                 this.cajaMensajes.append("Los tamanos de las paginas, de la memoria principal y de la memoria secundaria deben ser potencias de 2\n");
             }
+            this.colaProcesos = new LinkedList();
             this.procesos = new Proceso[memoriaVirtual.getMaximasPaginas()];
             this.establecer.setEnabled(false);
             this.labelTamMemoriaP.setText(Integer.toString(tamañoMemoria));
@@ -732,15 +739,18 @@ public class Interfaz extends javax.swing.JFrame {
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
         String nombreProceso = this.nombreProceso.getText();
         int tamañoProceso = Integer.parseInt(this.tamProceso.getText());
-        if (tamañoProceso <= memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria()) {
-            moverFromMemoriaToAlmacenamiento();
+        if (tamañoProceso <= (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria())) {
+
             this.procesos[contadorProceso] = new Proceso(contadorProceso, nombreProceso, tamañoProceso, memoriaVirtual.getTamañoPagina());
+            moverFromMemoriaToAlmacenamiento(contadorProceso);
             this.memoriaVirtual.agregarProceso(this.procesos[contadorProceso]);
             this.cajaMensajes.append("- Se ha creado un proceso de un tamaño " + tamañoProceso + ", su id es '" + contadorProceso + "', y el numero de paginas que posee son " + tamañoProceso / memoriaVirtual.getTamañoPagina() + "\n");
+            this.colaProcesos.add(this.procesos[contadorProceso].getIdProceso());
             contadorProceso++;
             this.labelCantProcesos.setText(Integer.toString(contadorProceso));
             this.nombreProceso.setText("Proceso " + contadorProceso);
             actualizar();
+
         } else {
             this.cajaMensajes.append("* ALERTA: No hay suficiente espacio en la memoria principal + la memoria secundaria para crear el proceso.\n");
         }
@@ -751,14 +761,14 @@ public class Interfaz extends javax.swing.JFrame {
             int idProceso = Integer.parseInt(this.idProceso.getText());
             if (procesos[idProceso] != null) {
                 //if (procesos[idProceso].getEstado() == "Suspendido/Bloqueado") {
-                    if (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria() != 0) {
-                        moverFromMemoriaToAlmacenamiento();
-                        memoriaVirtual.listoProceso(procesos[idProceso]);
-                        this.bloquearProceso.setEnabled(false);
-                        this.suspenderProceso.setEnabled(true);
-                        this.ponerProcesoListo.setEnabled(true);
-                        actualizar();
-                    }
+                if (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria() != 0) {
+                    moverFromMemoriaToAlmacenamiento(idProceso);
+                    memoriaVirtual.listoProceso(procesos[idProceso]);
+                    this.bloquearProceso.setEnabled(false);
+                    this.suspenderProceso.setEnabled(true);
+                    this.ponerProcesoListo.setEnabled(true);
+                    actualizar();
+                }
                 //}
                 procesos[idProceso].setEstado("Bloqueado");
                 actualizar();
@@ -794,7 +804,7 @@ public class Interfaz extends javax.swing.JFrame {
         int idProceso = Integer.parseInt(this.idProceso.getText());
         if (procesos[idProceso].getEstado() != "Bloqueado") {
             if (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria() != 0) {
-                moverFromMemoriaToAlmacenamiento();
+                moverFromMemoriaToAlmacenamiento(idProceso);
                 memoriaVirtual.listoProceso(procesos[idProceso]);
                 ponerProcesoListo.setEnabled(false);
                 this.suspenderProceso.setEnabled(true);
@@ -907,24 +917,36 @@ public class Interfaz extends javax.swing.JFrame {
         }
     }
 
-    private void moverFromMemoriaToAlmacenamiento() {
+    private void moverFromMemoriaToAlmacenamiento(int id) {
+        int mitad = (this.procesos[id].getCantidadPaginas() / 2);
+        if(mitad < 1){
+            mitad = 1;
+        }
         if (memoriaVirtual.getMemoriaPrincipal() == 0) {
             try {
                 for (int i = 0; i < procesos.length; i++) {
-                    if (procesos[i].getPaginasMemoriaPrincipal() >= 2) {
-                        this.memoriaVirtual.quitarUnaPaginaMemoria(procesos[i]);
-                        break;
+                    if (this.procesos[i] != null) {
+                        if (this.colaProcesos.peek() == this.procesos[i].getIdProceso()) {
+                            this.memoriaVirtual.quitarPaginasMemoria(procesos[i], mitad);
+                            if (this.memoriaVirtual.getContadorPagina() == mitad) {
+                                this.memoriaVirtual.setContadorPagina(0);
+                                break;
+                            } else {
+                                this.colaProcesos.poll();
+                            }
+                        }
                     }
                 }
             } catch (NullPointerException e) {
-                for (int i = 0; i < procesos.length; i++) {
+                /*for (int i = 0; i < procesos.length; i++) {
                     if (procesos[i].getPaginasMemoriaPrincipal() == 1) {
-                        this.memoriaVirtual.quitarUnaPaginaMemoria(procesos[i]);
+                        this.memoriaVirtual.quitarPaginasMemoria(procesos[i], mitad);
                         this.cajaMensajes.append("> Se ha suspendido el proceso de id " + procesos[i].getIdProceso() + " porque la memoria esta demasiado llena de procesos.\n");
                         procesos[i].setEstado("Suspendido");
                         break;
                     }
-                }
+                }*/
+                System.out.println(" " + e);
             }
         }
     }
@@ -979,6 +1001,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel labelCantMarcosP;
     private javax.swing.JLabel labelCantProcesos;
     private javax.swing.JLabel labelCrearP;
