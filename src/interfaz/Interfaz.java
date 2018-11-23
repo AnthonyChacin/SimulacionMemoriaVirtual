@@ -737,23 +737,37 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_establecerActionPerformed
 
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
-        String nombreProceso = this.nombreProceso.getText();
-        int tamañoProceso = Integer.parseInt(this.tamProceso.getText());
-        if (tamañoProceso <= (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria())) {
 
-            this.procesos[contadorProceso] = new Proceso(contadorProceso, nombreProceso, tamañoProceso, memoriaVirtual.getTamañoPagina());
-            moverFromMemoriaToAlmacenamiento(contadorProceso);
-            this.memoriaVirtual.agregarProceso(this.procesos[contadorProceso]);
-            this.cajaMensajes.append("- Se ha creado un proceso de un tamaño " + tamañoProceso + ", su id es '" + contadorProceso + "', y el numero de paginas que posee son " + tamañoProceso / memoriaVirtual.getTamañoPagina() + "\n");
-            this.colaProcesos.add(this.procesos[contadorProceso].getIdProceso());
-            contadorProceso++;
-            this.labelCantProcesos.setText(Integer.toString(contadorProceso));
-            this.nombreProceso.setText("Proceso " + contadorProceso);
-            actualizar();
+        try {
+            if (!"".equals(this.nombreProceso.getText()) && !"".equals(this.tamProceso.getText())) {
+                String nombreProceso = this.nombreProceso.getText();
+                int tamañoProceso = Integer.parseInt(this.tamProceso.getText());
+                if (tamañoProceso > 0) {
+                    if (tamañoProceso <= (memoriaVirtual.getMemoriaPrincipal() + memoriaVirtual.getMemoriaSecundaria())) {
 
-        } else {
-            this.cajaMensajes.append("* ALERTA: No hay suficiente espacio en la memoria principal + la memoria secundaria para crear el proceso.\n");
+                        this.procesos[contadorProceso] = new Proceso(contadorProceso, nombreProceso, tamañoProceso, memoriaVirtual.getTamañoPagina());
+                        moverFromMemoriaToAlmacenamiento(contadorProceso);
+                        this.memoriaVirtual.agregarProceso(this.procesos[contadorProceso]);
+                        this.cajaMensajes.append("- Se ha creado un proceso de un tamaño " + tamañoProceso + ", su id es '" + contadorProceso + "', y el numero de paginas que posee son " + tamañoProceso / memoriaVirtual.getTamañoPagina() + "\n");
+                        this.colaProcesos.add(this.procesos[contadorProceso].getIdProceso());
+                        contadorProceso++;
+                        this.labelCantProcesos.setText(Integer.toString(contadorProceso));
+                        this.nombreProceso.setText("Proceso " + contadorProceso);
+                        actualizar();
+
+                    } else {
+                        this.cajaMensajes.append("* ALERTA: No hay suficiente espacio en la memoria principal ni en la memoria secundaria para crear el proceso.\n");
+                    }
+                }else{
+                    this.cajaMensajes.append("* ALERTA: El tamaño del proceso debe ser mayor que cero (0)\n");
+                }
+            } else {
+                this.cajaMensajes.append("* ALERTA: Recuerde que todos los campos son requeridos para poder continuar\n");
+            }
+        } catch (Exception e) {
+            this.cajaMensajes.append("* ALERTA: Datos invalidos \n");
         }
+
     }//GEN-LAST:event_crearProcesoActionPerformed
 
     private void bloquearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bloquearProcesoActionPerformed
@@ -820,27 +834,39 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_ponerProcesoListoActionPerformed
 
     private void buscarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarProcesoActionPerformed
-        int idProceso = Integer.parseInt(this.idProceso.getText());
-        String estado = procesos[idProceso].getEstado();
-        eliminarProceso.setEnabled(true);
-        if (estado == "Listo" || estado == "Activo") {
-            this.ponerProcesoListo.setEnabled(false);
-            this.suspenderProceso.setEnabled(true);
-            this.bloquearProceso.setEnabled(true);
-        } else if (estado == "Suspendido") {
-            this.suspenderProceso.setEnabled(false);
-            this.ponerProcesoListo.setEnabled(true);
-            this.bloquearProceso.setEnabled(false);
-        } else if (estado == "Bloqueado") {
-            this.bloquearProceso.setEnabled(false);
-            this.suspenderProceso.setEnabled(true);
-            this.ponerProcesoListo.setEnabled(true);
-        } else if (estado == "Eliminado") {
-            this.suspenderProceso.setEnabled(false);
-            this.ponerProcesoListo.setEnabled(false);
-            this.eliminarProceso.setEnabled(false);
-            this.bloquearProceso.setEnabled(false);
+
+        try {
+
+            if (!"".equals(this.idProceso.getText())) {
+                int idProceso = Integer.parseInt(this.idProceso.getText());
+                String estado = procesos[idProceso].getEstado();
+                eliminarProceso.setEnabled(true);
+                if (estado == "Listo" || estado == "Activo") {
+                    this.ponerProcesoListo.setEnabled(false);
+                    this.suspenderProceso.setEnabled(true);
+                    this.bloquearProceso.setEnabled(true);
+                } else if (estado == "Suspendido") {
+                    this.suspenderProceso.setEnabled(false);
+                    this.ponerProcesoListo.setEnabled(true);
+                    this.bloquearProceso.setEnabled(false);
+                } else if (estado == "Bloqueado") {
+                    this.bloquearProceso.setEnabled(false);
+                    this.suspenderProceso.setEnabled(true);
+                    this.ponerProcesoListo.setEnabled(true);
+                } else if (estado == "Eliminado") {
+                    this.suspenderProceso.setEnabled(false);
+                    this.ponerProcesoListo.setEnabled(false);
+                    this.eliminarProceso.setEnabled(false);
+                    this.bloquearProceso.setEnabled(false);
+                }
+            } else {
+                this.cajaMensajes.append("* ALERTA: Recuerde que todos los campos son requeridos para poder continuar \n");
+            }
+
+        } catch (Exception e) {
+            this.cajaMensajes.append("* ALERTA: No se encontró ningún proceso con dicho id \n");
         }
+
     }//GEN-LAST:event_buscarProcesoActionPerformed
 
     private void suspenderProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_suspenderProcesoActionPerformed
@@ -919,7 +945,7 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void moverFromMemoriaToAlmacenamiento(int id) {
         int mitad = (this.procesos[id].getCantidadPaginas() / 2);
-        if(mitad < 1){
+        if (mitad < 1) {
             mitad = 1;
         }
         if (memoriaVirtual.getMemoriaPrincipal() == 0) {

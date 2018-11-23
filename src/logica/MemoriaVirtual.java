@@ -94,7 +94,6 @@ public class MemoriaVirtual {
         contadorDisponibles++;
         marcosDisponibles[contadorDisponibles - 1] = posicion;
         memoriaPrincipal += tamañoPagina;
-        Arrays.sort(marcosDisponibles);
     }
 
     private void agregarProcesoAlmacenamiento(Proceso proceso, int i) {
